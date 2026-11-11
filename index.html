@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <meta name="description" content="SpendWise — personal finance, made clear.">
+  <title>SpendWise — Personal Finance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div id="toast-region" aria-live="polite"></div>
+  <div id="auth-view" class="auth-shell hidden">
+    <div class="auth-card glass">
+      <div class="brand-mark">S<span>W</span></div>
+      <p class="eyebrow">✦ YOUR MONEY. YOUR CONTROL.</p>
+      <h1 id="auth-title">Welcome to SpendWise</h1>
+      <p class="muted" id="auth-subtitle">Sign in to keep your finances in focus.</p>
+      <form id="auth-form">
+        <label>Email address<input id="auth-email" type="email" placeholder="you@example.com" required autocomplete="email"></label>
+        <label>Password<input id="auth-password" type="password" placeholder="At least 8 characters" required minlength="8" autocomplete="current-password"></label>
+        <button class="btn primary full" type="submit" id="auth-submit">Sign in</button>
+        <button class="btn ghost full google-auth-btn" type="button" id="google-auth"><i data-lucide="globe"></i> Continue with Google</button>
+      </form>
+      <div class="auth-links"><button class="text-btn" id="auth-toggle">Create an account</button><button class="text-btn" id="forgot-btn">Forgot password?</button></div>
+      <p class="tiny muted">Google sign-in can be enabled in your Supabase dashboard after setup.</p>
+      <p class="tiny muted" id="auth-message"></p>
+    </div>
+  </div>
+
+  <div id="app-view" class="app-layout hidden">
+    <aside class="sidebar glass">
+      <a class="brand" href="#"><span class="brand-mark small">S<span>W</span></span><span>SpendWise</span></a>
+      <div class="side-label">WORKSPACE</div>
+      <nav id="side-nav">
+        <button class="nav-link active" data-page="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+        <button class="nav-link" data-page="transactions"><i data-lucide="arrow-left-right"></i>Transactions</button>
+        <button class="nav-link" data-page="analytics"><i data-lucide="chart-no-axes-combined"></i>Analytics & Reports</button>
+        <button class="nav-link" data-page="budgets"><i data-lucide="wallet"></i>Budgets</button>
+        <button class="nav-link" data-page="goals"><i data-lucide="target"></i>Savings Goals</button>
+        <button class="nav-link" data-page="wallets"><i data-lucide="landmark"></i>Wallets & Accounts</button>
+        <button class="nav-link" data-page="recurring"><i data-lucide="repeat"></i>Recurring Payments</button>
+        <button class="nav-link" data-page="calendar"><i data-lucide="calendar-days"></i>Expense Calendar</button>
+        <button class="nav-link" data-page="categories"><i data-lucide="tags"></i>Categories</button>
+        <button class="nav-link" data-page="notifications"><i data-lucide="bell"></i>Notifications</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="nav-link" data-page="settings"><i data-lucide="settings"></i>Settings</button>
+        <div class="user-mini"><div class="avatar" id="user-avatar">R</div><div><strong id="user-name">Your account</strong><small id="user-email">Not connected</small></div><button id="logout-btn" class="icon-btn" title="Sign out"><i data-lucide="log-out"></i></button></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><p class="eyebrow" id="date-label">YOUR FINANCIAL OVERVIEW</p><h1 id="page-title">Dashboard</h1></div>
+        <div class="top-actions"><button class="icon-btn" id="theme-toggle" title="Toggle theme"><i data-lucide="sun-moon"></i></button><button class="btn primary" id="quick-add"><i data-lucide="plus"></i> Add transaction</button></div>
+      </header>
+      <section id="page-content"></section>
+      <footer>© <span id="year"></span> Riten Kumar. All Rights Reserved. <span>Spend with intention.</span></footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav glass" id="mobile-nav">
+    <button data-page="dashboard" class="active"><i data-lucide="layout-dashboard"></i><span>Home</span></button>
+    <button data-page="transactions"><i data-lucide="arrow-left-right"></i><span>Activity</span></button>
+    <button data-page="analytics"><i data-lucide="chart-no-axes-combined"></i><span>Insights</span></button>
+    <button data-page="budgets"><i data-lucide="wallet"></i><span>Budgets</span></button>
+    <button data-page="settings"><i data-lucide="settings"></i><span>Settings</span></button>
+  </nav>
+
+  <dialog id="transaction-dialog" class="modal glass">
+    <form id="transaction-form" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">TRANSACTION</p><h2 id="transaction-modal-title">Add transaction</h2></div><button type="button" class="icon-btn" id="close-transaction"><i data-lucide="x"></i></button></div>
+      <input type="hidden" id="transaction-id">
+      <div class="form-grid">
+        <label>Type<select id="tx-type"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+        <label>Amount<input id="tx-amount" type="number" min="0.01" step="0.01" placeholder="0.00" required></label>
+        <label>Currency<select id="tx-currency"><option>INR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AED</option><option>CAD</option><option>AUD</option><option>JPY</option></select></label>
+        <label>Category<select id="tx-category"></select></label>
+        <label>Date & time<input id="tx-date" type="datetime-local" required></label>
+        <label>Payment method<select id="tx-payment"><option>Cash</option><option>UPI</option><option>Google Pay</option><option>PhonePe</option><option>Paytm</option><option>Debit Card</option><option>Credit Card</option><option>Net Banking</option><option>Bank Transfer</option><option>Other</option></select></label>
+        <label>Wallet / account<select id="tx-wallet"><option value="">No wallet selected</option></select></label>
+        <label>Tags<input id="tx-tags" placeholder="food, weekend (comma separated)"></label>
+        <label class="wide">Description / notes<input id="tx-description" maxlength="240" placeholder="What was this for?"></label>
+        <label class="wide">Receipt / bill (JPG, PNG, WEBP or PDF · max 5 MB)<input id="tx-receipt" type="file" accept="image/jpeg,image/png,image/webp,application/pdf"></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="btn ghost" id="cancel-transaction">Cancel</button><button class="btn primary" type="submit">Save transaction</button></div>
+    </form>
+  </dialog>
+  <dialog id="simple-dialog" class="modal glass"><form id="simple-form" method="dialog"><div class="modal-head"><h2 id="simple-title">Add item</h2><button type="button" class="icon-btn" id="simple-close"><i data-lucide="x"></i></button></div><div id="simple-fields"></div><div class="modal-actions"><button type="button" class="btn ghost" id="simple-cancel">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
